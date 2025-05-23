@@ -1,4 +1,4 @@
-import { Div, H1, P, Link } from '/framework/index.js';
+import { Div, H1, P, Link } from '../../mostJS/index.js';
 
 export default function NotFoundHandler () {
     document.title = "404 - Page Not Found";

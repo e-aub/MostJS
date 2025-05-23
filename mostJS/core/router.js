@@ -11,16 +11,16 @@ class Router {
     this.initialized = false;
     this.ownDomain = window.location.origin;
     this.notFoundHandler = () => {
-      return(
-       H1({}, ["404 Not Found"])
+      return (
+        H1({}, ["404 Not Found"])
       );
     };
 
     window.addEventListener("popstate", this._onPopState.bind(this));
-    
+
   }
 
-  
+
   register(path, handler, title = window.location.origin) {
     const paramNames = [];
     const regex = path.replace(/:([^/]+)/g, (_, name) => {
@@ -37,7 +37,7 @@ class Router {
     });
   }
 
-  
+
   push(path) {
     const [pathname, queryStr] = path.split("?");
     const query = this._parseQuery(queryStr || "");
@@ -56,19 +56,19 @@ class Router {
     document.title = match.title;
     render(match.path, match.handler);
   }
-reload() {
-  const path = window.location.pathname;
-  const queryStr = window.location.search;
-  const query = this._parseQuery(queryStr || "");
-  const match = this._matchRoute(path);
+  reload() {
+    const path = window.location.pathname;
+    const queryStr = window.location.search;
+    const query = this._parseQuery(queryStr || "");
+    const match = this._matchRoute(path);
 
-  if (match) {
-    document.title = match.title; 
-    render(match.path, match.handler);
-  } else {
-    console.warn(`No route match for reload: ${path}`);
+    if (match) {
+      document.title = match.title;
+      render(match.path, match.handler);
+    } else {
+      console.warn(`No route match for reload: ${path}`);
+    }
   }
-}
 
 
   pushOnly(path) {
@@ -112,7 +112,7 @@ reload() {
   _parseQuery(queryStr) {
     this.currentQuery = Object.fromEntries(new URLSearchParams(queryStr).entries());
     return this.currentQuery;
-}
+  }
 
 
   start() {
@@ -126,16 +126,16 @@ reload() {
     this.history.push(state);
     this.currentIndex = 0;
 
-    if (match){
+    if (match) {
       document.title = match.title;
       render(match.path, match.handler, {});
-    }else {
+    } else {
       console.warn(`No route match for start: ${path}`);
       render("not-found", this.notFoundHandler);
     }
   }
 
-  
+
   useParams() {
     return this.currentParams || {};
   }
@@ -154,4 +154,4 @@ reload() {
 }
 
 const router = new Router();
-export default router ;
+export default router;

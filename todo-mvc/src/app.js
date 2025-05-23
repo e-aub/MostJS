@@ -1,4 +1,4 @@
-import {Div, P, Button, Component, router } from '/framework/index.js';
+import {Div, P, Button, Component, router } from '../../mostJS/index.js';
 import NotFoundHandler from '/assets/components/NotFound.js';
 import AsideComponent from '/assets/components/Aside.js';
 import Todo from '/assets/components/Todo.js';

@@ -49,8 +49,8 @@ function createElement(node) {
   const children = node.children || [];
 
   Object.entries(props).forEach(([name, val]) => {
-    if (name === "autofocus") {
-      element.autofocus = true;
+    if (name === "autofocus" || name === "checked" ) {
+      element[`${name}`] = true;
     } else if (name.startsWith("on") && typeof val === "function") {
       element[name.toLowerCase()] = val;
     } else if (name === "className") {
