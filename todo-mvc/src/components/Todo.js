@@ -1,3 +1,4 @@
+import { Watch } from '../../../mostJS/core/watch.js';
 import { Div, H1, Input, Button, Ul, Li, Section, Header, Label, Main, Footer, Span, Link, useState, router, useRef } from '../../mostJS/index.js';
 
 
@@ -8,6 +9,7 @@ export default function Todo() {
     return stored ? JSON.parse(stored) : [];
   });
 
+
   const [input, setInput] = useState('');
   const [updateInput, setUpdateInput] = useState("");
   const [filter, setFilter] = useState(() => {
@@ -15,7 +17,19 @@ export default function Todo() {
   });
 
   const [invalidInput, setInvalidInput] = useState(false);
-  const [invalidUpdateInput, setInvalidUpdateInput] = useState(false)
+  const [invalidUpdateInput, setInvalidUpdateInput] = useState(false);
+
+
+  let inputRef = useRef("search-input");
+
+
+  const focusInput = () => {
+    inputRef = useRef("search-input");
+    console.log(inputRef);
+    inputRef.focus();
+  };
+
+  Watch(focusInput, [inputRef]);
 
   function validateInput(input) {
     if (!input) {
@@ -101,6 +115,7 @@ export default function Todo() {
           return Li({
             className: `todo-item ${todo.completed ? 'completed' : ''}`, key: todo.text,
             ondblclick: (event) => {
+              // focusInput();
               setTodos(todos =>
                 todos.map(t => t === todo ? { ...t, edit: true } : { ...t, edit: false })
               );
@@ -127,8 +142,9 @@ export default function Todo() {
               })
             ]) : Div({ className: `input-container ${invalidUpdateInput ? 'invalid' : ''}` }, [
               Input({
+                reference: "search-input",
                 onBlur: (e) => {
-                  console.warn("onblur evebt")
+                  console.warn("onblur evebt");
                   setTodos(todos =>
                     todos.map(t => { return { ...t, edit: false } })
                   );
