@@ -1,6 +1,7 @@
 import { createElement } from "./dom.js";
 import { componentStates } from "./state.js";
 import componentStack from "./componentStack.js";
+import { refs } from "./useRef.js";
 
 function diff(oldVNode, newVNode) {
   if (!oldVNode || !newVNode) return;
@@ -135,6 +136,10 @@ function patchElement(oldVNode, newVNode) {
         if (key === "autofocus") {
           el.autofocus = true;
         } else {
+          if (key == "reference") {
+            console.log("heeeeeeerererere")
+            refs.set(val, el);
+          }
           el.setAttribute(key, val);
 
         }

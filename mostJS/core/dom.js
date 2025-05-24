@@ -1,7 +1,7 @@
 import { componentIndexes, componentStates } from "./state.js";
 import componentStack from "./componentStack.js";
 import { diff } from "./diff.js";
-import { applyCallbacksAfterRender } from "./watch.js";
+import { applyCallbacksAfterRender, Indices } from "./watch.js";
 import { refs } from "./useRef.js";
 
 
@@ -49,7 +49,7 @@ function createElement(node) {
   const children = node.children || [];
 
   Object.entries(props).forEach(([name, val]) => {
-    if (name === "autofocus" || name === "checked" ) {
+    if (name === "autofocus" || name === "checked") {
       element[`${name}`] = true;
     } else if (name.startsWith("on") && typeof val === "function") {
       element[name.toLowerCase()] = val;
@@ -130,6 +130,7 @@ function rerender(componentTitle) {
 
 
   componentIndexes.set(componentTitle, 0);
+  Indices.clear();
 
 
   const componentState = componentStates.get(componentTitle);

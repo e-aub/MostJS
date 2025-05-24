@@ -8,7 +8,7 @@ export default function Todo() {
     const stored = localStorage.getItem('todos');
     return stored ? JSON.parse(stored) : [];
   });
-
+  const [isUpdate, setupdate] = useState(false);
 
   const [input, setInput] = useState('');
   const [updateInput, setUpdateInput] = useState("");
@@ -20,16 +20,17 @@ export default function Todo() {
   const [invalidUpdateInput, setInvalidUpdateInput] = useState(false);
 
 
-  let inputRef = useRef("search-input");
 
 
   const focusInput = () => {
-    inputRef = useRef("search-input");
-    console.log(inputRef);
-    inputRef.focus();
+    let inputRef = useRef("search-input");
+    if (inputRef && isUpdate) {
+      inputRef.focus();
+      inputRef.setSelectionRange(inputRef.value.length, inputRef.value.length);
+    }
   };
 
-  Watch(focusInput, [inputRef]);
+  Watch([], focusInput);
 
   function validateInput(input) {
     if (!input) {
@@ -115,7 +116,7 @@ export default function Todo() {
           return Li({
             className: `todo-item ${todo.completed ? 'completed' : ''}`, key: todo.text,
             ondblclick: (event) => {
-              // focusInput();
+              setupdate(true);
               setTodos(todos =>
                 todos.map(t => t === todo ? { ...t, edit: true } : { ...t, edit: false })
               );
@@ -144,7 +145,7 @@ export default function Todo() {
               Input({
                 reference: "search-input",
                 onBlur: (e) => {
-                  console.warn("onblur evebt");
+                  setupdate(false);
                   setTodos(todos =>
                     todos.map(t => { return { ...t, edit: false } })
                   );

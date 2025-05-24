@@ -1,8 +1,43 @@
 import componentStack from "./componentStack.js";
+import { componentIndexes } from "./state.js";
 
-let oldDependencies = new Map();
-let afterRenderEffects = new Map();
-let watchEffects = new Map();
+
+const Data = new Map();  // Key = componentTitle  Value =[{deps: [values], calback: func }]
+export const Indices = new Map();  // key = componentTitle Value = index (int)
+
+let CalbackStack = [];
+
+export function Watch(Depency, callback) {
+    const currentComponent = componentStack.current;
+    const index = Indices.get(currentComponent) || 0;
+    let Deps = Data.get(currentComponent);
+    if (!Deps) {
+        Data.set(currentComponent, []);
+        Deps = Data.get(currentComponent);
+    }
+
+    if (!Deps[index]) {
+        Deps[index] = {
+            deps: Depency,
+            callback: callback,
+        }
+    } else {
+        if (!areDepsEqual(Deps[index].deps, Depency)) {
+            CalbackStack.push(callback);
+            Deps[index].deps = Depency;
+        } else if (Depency.length == 0) {
+            CalbackStack.push(callback);
+        }
+    }
+    Indices.set(currentComponent, index + 1);
+}
+
+export function applyCallbacksAfterRender() {
+    CalbackStack.forEach((calback) => {
+        calback();
+    });
+    CalbackStack = [];
+}
 
 export function isPlainObject(obj) {
     return obj !== null && typeof obj === "object" && obj.constructor === Object;
@@ -29,7 +64,6 @@ export function areDepsEqual(newDeps, oldDeps) {
                 } else if (isPlainObject(val) && isPlainObject(oldDep[j])) {
                     return shallowEqualObjects(val, oldDep[j]);
                 }
-
                 return val === oldDep[j];
             });
         }
@@ -42,83 +76,64 @@ export function areDepsEqual(newDeps, oldDeps) {
     });
 }
 
-export function Watch(callback, deps = null) {
-    const currentComponent = componentStack.current;
-    if (!currentComponent) {
-        console.error("Watch called outside component context");
-        return;
-    }
-
-    if (!watchEffects.has(currentComponent)) {
-        watchEffects.set(currentComponent, [{ effects: [], index: 0 }]);
-    }
 
 
 
-    if (!afterRenderEffects.has(currentComponent)) {
-        afterRenderEffects.set(currentComponent, []);
-    }
-
-    const effects = afterRenderEffects.get(currentComponent);
+///////////////////////////////////////////////////////////////////////
 
 
-    if (!deps) {
-        effects.push(() => {
-            callback();
-        });
-        return;
-    }
+
+// export function Watch(callback, deps = null) {
+//     const currentComponent = componentStack.current;
+//     if (!currentComponent) {
+//         console.error("Watch called outside component context");
+//         return;
+//     }
+
+//     if (!watchEffects.has(currentComponent)) {
+//         watchEffects.set(currentComponent, [{ effects: [], index: 0 }]);
+//     }
 
 
-    if (!Array.isArray(deps)) {
-        console.error(
-            "%c[Watch Error]%c Expected an array of dependencies.\n" +
-            "Wrap dependencies in square brackets like this: %c[dep1, dep2]%c.",
-            "color: red; font-weight: bold;",
-            "color: white;",
-            "color: cyan; font-style: italic;",
-            "color: white;"
-        );
-        return;
-    }
+
+//     if (!afterRenderEffects.has(currentComponent)) {
+//         afterRenderEffects.set(currentComponent, []);
+//     }
+
+//     const effects = afterRenderEffects.get(currentComponent);
 
 
-    const oldDeps = oldDependencies.get(currentComponent) || [];
+//     if (!deps) {
+//         effects.push(() => {
+//             callback();
+//         });
+//         return;
+//     }
 
 
-    const hasChanged = oldDeps.length === 0 || !areDepsEqual(deps, oldDeps);
+//     if (!Array.isArray(deps)) {
+//         console.error(
+//             "%c[Watch Error]%c Expected an array of dependencies.\n" +
+//             "Wrap dependencies in square brackets like this: %c[dep1, dep2]%c.",
+//             "color: red; font-weight: bold;",
+//             "color: white;",
+//             "color: cyan; font-style: italic;",
+//             "color: white;"
+//         );
+//         return;
+//     }
 
 
-    if (hasChanged) {
-        oldDependencies.set(currentComponent, [...deps]);
-        effects.push(() => {
-            callback();
-        });
-    }
-}
-
-export function applyCallbacksAfterRender() {
-    const currentComponent = componentStack.current;
-
-    if (!currentComponent || !afterRenderEffects.has(currentComponent)) {
-        return;
-    }
-
-    const currentAfterRenderEffects = afterRenderEffects.get(currentComponent);
+//     const oldDeps = oldDependencies.get(currentComponent) || [];
 
 
-    afterRenderEffects.set(currentComponent, []);
+//     const hasChanged = oldDeps.length === 0 || !areDepsEqual(deps, oldDeps);
 
 
-    if (currentAfterRenderEffects && currentAfterRenderEffects.length > 0) {
-        requestAnimationFrame(() => {
-            currentAfterRenderEffects.forEach((callback) => {
-                try {
-                    callback();
-                } catch (error) {
-                    console.error("Error in effect:", error);
-                }
-            });
-        });
-    }
-}
+//     if (hasChanged) {
+//         oldDependencies.set(currentComponent, [...deps]);
+//         effects.push(() => {
+//             callback();
+//         });
+//     }
+// }
