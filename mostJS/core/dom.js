@@ -117,6 +117,7 @@ function render(componentTitle, componentFn, props = {}) {
 
 
   rootElement.appendChild(element);
+  applyCallbacksAfterRender();
   return element;
 }
 

@@ -7,7 +7,7 @@ export const Indices = new Map();  // key = componentTitle Value = index (int)
 
 let CalbackStack = [];
 
-export function Watch(Depency, callback) {
+export function Watch(callback, Depency = null) {
     const currentComponent = componentStack.current;
     const index = Indices.get(currentComponent) || 0;
     let Deps = Data.get(currentComponent);
@@ -17,17 +17,21 @@ export function Watch(Depency, callback) {
     }
 
     if (!Deps[index]) {
+        if ((Depency && Depency.length === 0) || !Depency) {
+            CalbackStack.push(callback);
+        }
         Deps[index] = {
             deps: Depency,
             callback: callback,
         }
     } else {
-        if (!areDepsEqual(Deps[index].deps, Depency)) {
+        if (Depency == null) {
+            CalbackStack.push(callback);
+        } else if (!areDepsEqual(Deps[index].deps, Depency)) {
             CalbackStack.push(callback);
             Deps[index].deps = Depency;
-        } else if (Depency.length == 0) {
-            CalbackStack.push(callback);
         }
+
     }
     Indices.set(currentComponent, index + 1);
 }

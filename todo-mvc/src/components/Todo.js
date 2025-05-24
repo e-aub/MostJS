@@ -30,7 +30,7 @@ export default function Todo() {
     }
   };
 
-  Watch([], focusInput);
+  Watch(focusInput);
 
   function validateInput(input) {
     if (!input) {
