@@ -16,6 +16,8 @@ export default function Todo() {
     return router.useParams().filter || "all";
   });
 
+  const [ischecked, setchecked] = useState(false);
+
   const [invalidInput, setInvalidInput] = useState(false);
   const [invalidUpdateInput, setInvalidUpdateInput] = useState(false);
 
@@ -28,21 +30,32 @@ export default function Todo() {
       inputRef.focus();
       inputRef.setSelectionRange(inputRef.value.length, inputRef.value.length);
     }
+
+
   };
 
   Watch(focusInput);
+  Watch(() => {
+    let inputRef = useRef("check");
+
+    for (let i = 0; i < todos.length; i++) {
+      let element = todos[i];
+      if (!element.completed) {
+        inputRef.checked = false;
+        setchecked(false);
+        return
+      }
+    }
+
+    inputRef.checked = true;
+    setchecked(true);
+  });
 
   function validateInput(input) {
     if (!input) {
       return false;
     }
-
-    for (let i = 0; i < todos.length; i++) {
-      if (todos[i].text === input) {
-        return false;
-      }
-    }
-    return true;
+    return input.length > 1;
   }
 
   const updatecomponent = (event, todo) => {
@@ -92,7 +105,7 @@ export default function Todo() {
     Main({ className: "main" }, [
       todos.length > 0 ? Div({ className: "toggle-all-container" }, [
         Input({
-          className: "toggle-all", type: "checkbox", id: "toggle-all", checked: localStorage.getItem("toggle-all"),
+          className: "toggle-all", type: "checkbox", id: "toggle-all", reference: "check",
           onclick: (e) => {
             const checked = e.target.checked;
             setTodos(todos => {
@@ -100,16 +113,14 @@ export default function Todo() {
                 return { ...t, completed: checked }
               })
               localStorage.setItem('todos', JSON.stringify(updated));
-              localStorage.setItem('toggle-all', checked)
               return updated
             })
           }
         }),
         Label({
+          className: "toggle-all-label",
           for: "toggle-all",
-          className: `toggle-all-label ${localStorage.getItem("toggle-all") ? 'active' : 'inactive'}`
-        }, ["✓"])
-
+        }, [])
       ]) : "",
       Ul({ className: "todo-list" },
         todos.filter((todo) => filter === 'all' || filter === 'active' && !todo.completed || filter === 'completed' && todo.completed).map((todo) => {
