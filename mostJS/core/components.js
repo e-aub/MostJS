@@ -127,13 +127,3 @@ export function Label(props = {}, children = []) {
 export function Main(props = {}, children = []) {
   return Create("main", props, children);
 }
-export function ErrorBoundary({ fallback, children }) {
-  try {
-    return children;
-  } catch (error) {
-    console.error("Error in component:", error);
-    return typeof fallback === "function"
-      ? fallback(error)
-      : Create("div", { className: "error" }, "Something went wrong");
-  }
-}

@@ -1,5 +1,4 @@
 import componentStack from "./componentStack.js";
-import { componentIndexes } from "./state.js";
 
 
 const Data = new Map();  // Key = componentTitle  Value =[{deps: [values], calback: func }]
