@@ -6,7 +6,7 @@ import { refs } from "./useRef.js";
 
 
 const titleToComponentMap = new Map();
-let rerenderTimeouts = new Map();
+const scheduled = new Set();
 
 
 function Create(tag, props, ...children) {
@@ -124,20 +124,18 @@ function render(componentTitle, componentFn, props = {}) {
 
 
 function rerender(componentTitle) {
-  if (rerenderTimeouts.has(componentTitle)) {
-    clearTimeout(rerenderTimeouts.get(componentTitle));
-  }
+  if (scheduled.has(componentTitle)) return;
 
-  const timeout = setTimeout(() => {
+  scheduled.add(componentTitle);
+  setTimeout(() => {
     _rerender(componentTitle);
-    rerenderTimeouts.delete(componentTitle);
+    scheduled.delete(componentTitle);
   }, 0);
-
-  rerenderTimeouts.set(componentTitle, timeout);
 }
 
 
 function _rerender(componentTitle) {
+  console.warn(`rerendering ${componentTitle} ...`);
   const componentFn = titleToComponentMap.get(componentTitle);
   if (!componentFn) {
     console.error(`Component function not found for ${componentTitle}`);
