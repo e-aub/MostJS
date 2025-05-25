@@ -6,7 +6,6 @@ import Todo from '/assets/components/Todo.js';
 
 
 const App = () => {
-  const [reset, setReset] = useState(true);
   return Div({ className: 'app' }, [
     Component(AsideComponent, {}, "aside"),
     Component(Todo, {}, "todo-app"),
@@ -14,7 +13,7 @@ const App = () => {
       className: "reset",
       onclick: () => {
         localStorage.removeItem('todos');
-        setReset(!reset);
+        router.reload();
       }
     }, "Reset"),
     P({ className: "warning" }, "History will only be accessible in the browser where it was saved. If you use a different browser, a new, independent history will be created there.")

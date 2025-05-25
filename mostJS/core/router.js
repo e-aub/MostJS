@@ -67,6 +67,21 @@ class Router {
     console.log(this.history);
   }
 
+  reload() {
+    const path = window.location.pathname;
+    const queryStr = window.location.search;
+    this._parseQuery(queryStr || "");
+    const match = this._matchRoute(path);
+
+    if (match) {
+      document.title = match.title;
+      render(match.path, match.handler);
+    } else {
+      console.warn(`No route match for reload: ${path}`);
+    }
+  }
+
+
   _onPopState(event) {
     const state = event.state;
     if (!state) return;
