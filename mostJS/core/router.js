@@ -64,6 +64,7 @@ class Router {
     this.history = this.history.slice(0, this.currentIndex + 1);
     this.history.push(state);
     this.currentIndex++;
+    console.log(this.history);
   }
 
   _onPopState(event) {
@@ -105,7 +106,7 @@ class Router {
   start() {
     const path = window.location.pathname;
     const queryStr = window.location.search;
-    const query = this._parseQuery(queryStr || "");
+    this._parseQuery(queryStr || "");
     const match = this._matchRoute(path);
 
     const state = { path, queryStr, id: Date.now() };
@@ -118,7 +119,7 @@ class Router {
       render(match.path, match.handler, {});
     } else {
       console.warn(`No route match for start: ${path}`);
-      render("not-found", this.notFoundHandler);
+      render("not-found-MostJs", this.notFoundHandler);
     }
   }
 

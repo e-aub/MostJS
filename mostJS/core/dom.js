@@ -6,6 +6,7 @@ import { refs } from "./useRef.js";
 
 
 const titleToComponentMap = new Map();
+let rerenderTimeouts = new Map();
 
 
 function Create(tag, props, ...children) {
@@ -123,6 +124,20 @@ function render(componentTitle, componentFn, props = {}) {
 
 
 function rerender(componentTitle) {
+  if (rerenderTimeouts.has(componentTitle)) {
+    clearTimeout(rerenderTimeouts.get(componentTitle));
+  }
+
+  const timeout = setTimeout(() => {
+    _rerender(componentTitle);
+    rerenderTimeouts.delete(componentTitle);
+  }, 0);
+
+  rerenderTimeouts.set(componentTitle, timeout);
+}
+
+
+function _rerender(componentTitle) {
   const componentFn = titleToComponentMap.get(componentTitle);
   if (!componentFn) {
     console.error(`Component function not found for ${componentTitle}`);
@@ -171,8 +186,11 @@ function Component(componentFn, props, title) {
     return null;
   }
 
+  if (!titleToComponentMap.has(title)){
+    titleToComponentMap.set(title, () => componentFn(props));
+  }
 
-  titleToComponentMap.set(title, () => componentFn(props));
+
 
 
   componentIndexes.set(title, 0);
@@ -189,11 +207,11 @@ function Component(componentFn, props, title) {
 
     const vdom = componentFn(props);
 
+    if (!componentStates.get(title).vdom){
+      componentStates.get(title).vdom = vdom;
+    }
 
-    componentStates.get(title).vdom = vdom;
 
-
-    vdom.componentTitle = title;
 
     return vdom;
   } catch (error) {

@@ -60,7 +60,6 @@ function diff(oldVNode, newVNode) {
 
       const existing = oldChild.ref;
 
-      // this line causes undefined
       const refAtIndex = parentEl.childNodes[currentDomIndex];
       if (refAtIndex !== existing) {
         parentEl.insertBefore(existing, refAtIndex || null);
@@ -73,6 +72,8 @@ function diff(oldVNode, newVNode) {
         newChild.ref = newEl;
         const refAtIndex = parentEl.childNodes[currentDomIndex];
         parentEl.insertBefore(newEl, refAtIndex || null);
+        currentDomIndex++;
+        continue;
       }
     }
 
@@ -84,8 +85,6 @@ function diff(oldVNode, newVNode) {
       oldChild.ref?.remove();
     }
   });
-
-  newVNode.ref = oldVNode.ref;
 
   const currentComponent = componentStack.current;
   componentStates.get(currentComponent).vdom = newVNode
@@ -108,18 +107,19 @@ function patchElement(oldVNode, newVNode) {
   const oldProps = oldVNode.props || {};
   const newProps = newVNode.props || {};
 
-  if (newProps.style) {
-    if (oldProps.style) {
-      Object.keys(oldProps.style).forEach(key => {
+  if (newProps.style || oldProps.style) {
+    const newStyle = newProps.style || {};
+    const oldStyle = oldProps.style || {};
+    
+    Object.keys(oldStyle).forEach(key => {
+      if (!(key in newStyle)) {
         el.style[key] = '';
-      });
-    }
-    Object.assign(el.style, newProps.style);
-  } else if (oldProps.style) {
-    Object.keys(oldProps.style).forEach(key => {
-      el.style[key] = '';
+      }
     });
+
+    Object.assign(el.style, newStyle);
   }
+
 
   Object.keys(newProps).forEach((key) => {
 
@@ -139,7 +139,6 @@ function patchElement(oldVNode, newVNode) {
           el.autofocus = true;
         } else {
           if (key == "reference") {
-            console.log("heeeeeeerererere")
             refs.set(val, el);
           }
           el.setAttribute(key, val);
