@@ -6,7 +6,7 @@ export default function AsideComponent() {
       H3({}, "MostJS TodoMVC"),
       Span({className: "source-links"}, [
       H5({}, "Source:"),
-      Link({href: "https://github.com/mostjs/most-todomvc"},"source"),
+      Link({href: "https://github.com/e-aub/MostJS"},"source"),
       ]),
       Hr({}),
       Blockquote({className: "quote speech-bubble"}, [
@@ -19,8 +19,8 @@ export default function AsideComponent() {
       Hr({}),
       H4({}, "Official Ressources"),
       Ul({}, [
-        Li({}, Link({href: "https://github.com/mostjs/most-todomvc"},"Quickstart")),
-        Li({}, Link({href: "https://github.com/mostjs/most-todomvc"},"Documentation")),
+        Li({}, Link({href: "https://github.com/e-aub/MostJS"},"Quickstart")),
+        Li({}, Link({href: "https://github.com/e-aub/MostJS"},"Documentation")),
         
       ])
     ]),
