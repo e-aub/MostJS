@@ -9,6 +9,8 @@ function diff(oldVNode, newVNode) {
     console.error("Missing ref in oldVNode:", oldVNode);
     return;
   }
+
+  patchElement(oldVNode, newVNode);
   const parentEl = oldVNode.ref
   const oldChildren = oldVNode.children || [];
   const newChildren = newVNode.children || [];
