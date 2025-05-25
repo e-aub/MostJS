@@ -56,19 +56,6 @@ class Router {
     document.title = match.title;
     render(match.path, match.handler);
   }
-  reload() {
-    const path = window.location.pathname;
-    const queryStr = window.location.search;
-    const query = this._parseQuery(queryStr || "");
-    const match = this._matchRoute(path);
-
-    if (match) {
-      document.title = match.title;
-      render(match.path, match.handler);
-    } else {
-      console.warn(`No route match for reload: ${path}`);
-    }
-  }
 
 
   pushOnly(path) {

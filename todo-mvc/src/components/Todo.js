@@ -1,5 +1,4 @@
-import { Watch } from '../../../mostJS/core/watch.js';
-import { Div, H1, Input, Button, Ul, Li, Section, Header, Label, Main, Footer, Span, Link, useState, router, useRef } from '../../mostJS/index.js';
+import { Div, H1, Input, Button, Ul, Li, Section, Header, Label, Main, Footer, Span, Link, useState, router, useRef, Watch } from '../../mostJS/index.js';
 
 
 
@@ -16,7 +15,6 @@ export default function Todo() {
     return router.useParams().filter || "all";
   });
 
-  const [ischecked, setchecked] = useState(false);
 
   const [invalidInput, setInvalidInput] = useState(false);
   const [invalidUpdateInput, setInvalidUpdateInput] = useState(false);
@@ -35,20 +33,21 @@ export default function Todo() {
   };
 
   Watch(focusInput);
+
   Watch(() => {
     let inputRef = useRef("check");
-
-    for (let i = 0; i < todos.length; i++) {
-      let element = todos[i];
-      if (!element.completed) {
-        inputRef.checked = false;
-        setchecked(false);
-        return
+    if (inputRef) {
+      for (let i = 0; i < todos.length; i++) {
+        let element = todos[i];
+        if (!element.completed) {
+          inputRef.checked = false;
+          return
+        }
       }
+
+      inputRef.checked = true;
     }
 
-    inputRef.checked = true;
-    setchecked(true);
   });
 
   function validateInput(input) {

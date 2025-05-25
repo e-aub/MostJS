@@ -13,7 +13,6 @@ const App = () => {
       className: "reset",
       onclick: () => {
         localStorage.removeItem('todos');
-        router.reload();
       }
     }, "Reset"),
     P({ className: "warning" }, "History will only be accessible in the browser where it was saved. If you use a different browser, a new, independent history will be created there.")

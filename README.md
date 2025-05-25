@@ -326,7 +326,10 @@ The reference system in MostJS:
 1. Uses a global map to store references to DOM elements
 2. Requires elements to have a `reference` prop with a unique identifier
 3. During element creation, elements with a `reference` prop are added to the refs map
-4. The `useRef` function retrieves elements from this map using the identifier
+4. The `useRef` function retrieves an element from the `refs` map using the provided identifier.  
+If the reference is not found, it returns `undefined`.
+
+> This can happen when elements are rendered conditionally and the reference was never attached.
 
 ### Watching for Changes
 
